@@ -14,18 +14,23 @@ async function sendUserData() {
         let values = components.map(component => component.value);
         let fingerprint = Fingerprint2.x64hash128(values.join(''), 31);
 
+        const requestData = {
+            user_id: userId,
+            fingerprint: fingerprint,
+            timestamp: new Date().toISOString(),
+            action: 'page_visit'
+        };
+
+        console.log("Sending data:", requestData);
+
         try {
             const response = await fetch('https://empty-moon-5b1b.manawork79.workers.dev', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: userId,  // ここで user_id を送信
-                    fingerprint: fingerprint,
-                    timestamp: new Date().toISOString(),
-                    action: 'page_visit'
-                })
+                body: JSON.stringify(requestData)
             });
-            console.log('Sent to Cloudflare:', await response.json());
+
+            console.log('Response from Cloudflare:', await response.json());
         } catch (error) {
             console.error('Error:', error);
         }
