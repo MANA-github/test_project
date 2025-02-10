@@ -1,6 +1,11 @@
 import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@9.0.0/+esm';
 
 async function sendUserData() {
+    if (!localStorage.getItem('user_id')) {
+        localStorage.setItem('user_id', uuidv4());
+    }
+    let userId = localStorage.getItem('user_id');
+
     if (window.Fingerprint2) {
         const components = await new Promise(resolve => {
             Fingerprint2.get(resolve);
@@ -14,12 +19,13 @@ async function sendUserData() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    user_id: userId,  // ここで user_id を送信
                     fingerprint: fingerprint,
                     timestamp: new Date().toISOString(),
                     action: 'page_visit'
                 })
             });
-            console.log('Sent to Cloudflare:', response);
+            console.log('Sent to Cloudflare:', await response.json());
         } catch (error) {
             console.error('Error:', error);
         }
@@ -28,12 +34,3 @@ async function sendUserData() {
     }
 }
 sendUserData();
-
-let userId;
-if (!localStorage.getItem('user_id')) {
-    userId = uuidv4();
-    localStorage.setItem('user_id', userId);
-} else {
-    userId = localStorage.getItem('user_id');
-}
-console.log(userId);
