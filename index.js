@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 function sendUserData() {
     Fingerprint2.get((components) => {
     let values = components.map(component => component.value);
@@ -17,7 +19,6 @@ function sendUserData() {
 }
 sendUserData();
 
-import { v4 as uuidv4 } from 'uuid';
 if (!localStorage.getItem('user_id')) {
     const userId = uuidv4();
     localStorage.setItem('user_id', userId);
