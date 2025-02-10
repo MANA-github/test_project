@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@9.0.0/+esm';
 
 async function sendUserData() {
     if (window.Fingerprint2) {
@@ -9,16 +9,20 @@ async function sendUserData() {
         let values = components.map(component => component.value);
         let fingerprint = Fingerprint2.x64hash128(values.join(''), 31);
 
-        fetch('https://empty-moon-5b1b.manawork79.workers.dev', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                fingerprint: fingerprint,
-                timestamp: new Date().toISOString(),
-                action: 'page_visit'
-            })
-        }).then(response => console.log('Sent to Cloudflare:', response))
-          .catch(error => console.error('Error:', error));
+        try {
+            const response = await fetch('https://empty-moon-5b1b.manawork79.workers.dev', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fingerprint: fingerprint,
+                    timestamp: new Date().toISOString(),
+                    action: 'page_visit'
+                })
+            });
+            console.log('Sent to Cloudflare:', response);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     } else {
         console.error("Fingerprint2 is not available.");
     }
